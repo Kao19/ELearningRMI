@@ -18,16 +18,21 @@ public class BroadcastTableauBlanc extends UnicastRemoteObject implements IBroad
         // TODO Auto-generated method stub
         this.p.add(p);
 
-        for(int i=0; i<tableau.size(); i++){
-            tableau.get(i).afficherContenu(p);
+        for (ITableauBlac s: this.tableau) {
+            try {
+                s.afficherContenu(p);
+            }catch (Exception e)
+            {
+                this.tableau.remove(s);
+            }
         }
     }
 
     @Override
     public void enregistrerContenu(ITableauBlac tab) throws RemoteException {
-        // TODO Auto-generated method stub
-        for(int i=0;i<p.size();i++){
-            tab.afficherContenu(p.get(i));
+        for(Pixel s : this.p)
+        {
+            tab.afficherContenu(s);
         }
         this.tableau.add(tab);
     }

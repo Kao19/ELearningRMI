@@ -6,9 +6,11 @@ import java.rmi.server.*;
 public class MainServer {
     public static void main(String[] args) throws RemoteException{
         BroadcastTableauBlanc b = new BroadcastTableauBlanc();
+        Login log = new Login();
         LocateRegistry.createRegistry(1099);
         try {
             Naming.rebind("tableauBlanc", b);
+            Naming.rebind("login", log);
             System.out.println("objet distant cree");
         } catch (MalformedURLException e) {
             // TODO: handle exception

@@ -7,7 +7,9 @@ import java.awt.event.*;
 import javax.swing.*;
 
 public class TableauBlac extends UnicastRemoteObject implements ITableauBlac{
+    
     JPanel panel;
+    JFrame fenetre;
     Color couleurEcriture = Color.black;
     IBroadcastTableauBlanc broad;
     Color[] listeCouleurs = { Color.black, Color.white, Color.blue, Color.green, Color.red };
@@ -24,10 +26,10 @@ public class TableauBlac extends UnicastRemoteObject implements ITableauBlac{
         p.add( panel, BorderLayout.CENTER);
         p.add( colors, BorderLayout.SOUTH);
         
-        JFrame fenetre = new JFrame();                               
+        fenetre = new JFrame();                               
         fenetre.setContentPane(p);
         fenetre.pack();
-        fenetre.setVisible( true );
+        fenetre.setVisible( false );
         fenetre.setDefaultCloseOperation( JFrame.EXIT_ON_CLOSE );
 
         panel.addMouseMotionListener(new MouseMotionListener(){
@@ -54,6 +56,10 @@ public class TableauBlac extends UnicastRemoteObject implements ITableauBlac{
             }
 
         });
+    }
+
+    public void setVisibleFrame(){
+        fenetre.setVisible(true);
     }
 
     public JPanel afficherListesCouleur(){
