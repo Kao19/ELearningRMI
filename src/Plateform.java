@@ -1,24 +1,25 @@
-import java.rmi.*;
-import java.rmi.registry.*;
-import java.rmi.server.*;
+import java.rmi.RemoteException;
+import java.rmi.server.UnicastRemoteObject;
 import java.util.*;
 
-public class BroadcastTableauBlanc extends UnicastRemoteObject implements IBroadcastTableauBlanc{
-    
-    private ArrayList<ITableauBlac> tableau;
+public class Plateform extends UnicastRemoteObject implements IPlateforme {
+
+    private ArrayList<IELearning> tableau;
     private ArrayList<Pixel> p;
 
-    public BroadcastTableauBlanc() throws RemoteException{
-        tableau = new ArrayList<ITableauBlac>();
+    
+    protected Plateform() throws RemoteException {
+        tableau = new ArrayList<IELearning>();
         p = new ArrayList<Pixel>();
     }
+
 
     @Override
     public void diffuserContenu(Pixel p) throws RemoteException {
         // TODO Auto-generated method stub
         this.p.add(p);
 
-        for (ITableauBlac s: this.tableau) {
+        for (IELearning s: this.tableau) {
             try {
                 s.afficherContenu(p);
             }catch (Exception e)
@@ -28,8 +29,9 @@ public class BroadcastTableauBlanc extends UnicastRemoteObject implements IBroad
         }
     }
 
+
     @Override
-    public void enregistrerContenu(ITableauBlac tab) throws RemoteException {
+    public void enregistrerContenu(IELearning tab) throws RemoteException {
         for(Pixel s : this.p)
         {
             tab.afficherContenu(s);
@@ -38,5 +40,4 @@ public class BroadcastTableauBlanc extends UnicastRemoteObject implements IBroad
     }
 
     
-
 }

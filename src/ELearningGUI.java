@@ -6,37 +6,61 @@ import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
 
-public class TableauBlac extends UnicastRemoteObject implements ITableauBlac{
+public class ELearningGUI extends UnicastRemoteObject implements IELearning{
     
-    JPanel panel;
     JFrame fenetre;
+
+    JPanel panelBoard;
     Color couleurEcriture = Color.black;
-    IBroadcastTableauBlanc broad;
+    IPlateforme broad;
     Color[] listeCouleurs = { Color.black, Color.white, Color.blue, Color.green, Color.red };
 
-    public TableauBlac(IBroadcastTableauBlanc broad) throws RemoteException{
-        this.broad = broad;
-        panel = new JPanel();
-        panel.setBackground(Color.white);
-        panel.setPreferredSize(new Dimension(300,300));
+    JPanel panelRoom;
+
+    public ELearningGUI(IPlateforme broad) throws RemoteException{
         
+        this.broad = broad;
+        panelBoard = new JPanel();
+        panelBoard.setBackground(Color.white);
+        panelBoard.setPreferredSize(new Dimension(400,600));
+        
+
+        panelRoom = new JPanel();
+        panelRoom.setBackground(Color.black);
+        panelRoom.setPreferredSize(new Dimension(400,600));
+        
+        JTextField input = new JTextField(35);
+        input.setBounds(20,40,200,30);
+
+
         JPanel colors = afficherListesCouleur();
+
+        
+        JPanel inputANDcolors = new JPanel();
+        inputANDcolors.setPreferredSize(new Dimension(400,30));
+        inputANDcolors.add( colors, BorderLayout.WEST);
+        inputANDcolors.add(Box.createHorizontalStrut(77));
+        inputANDcolors.add( input, BorderLayout.EAST);
+        
+
         JPanel p = new JPanel();
         p.setLayout( new BorderLayout() );
-        p.add( panel, BorderLayout.CENTER);
-        p.add( colors, BorderLayout.SOUTH);
+        p.add( panelBoard, BorderLayout.CENTER);
+        p.add( panelRoom, BorderLayout.EAST);
+        p.add(inputANDcolors, BorderLayout.SOUTH);
         
         fenetre = new JFrame();                               
         fenetre.setContentPane(p);
         fenetre.pack();
         fenetre.setVisible( false );
         fenetre.setDefaultCloseOperation( JFrame.EXIT_ON_CLOSE );
+        fenetre.setLocationRelativeTo(null);
+        fenetre.setResizable(false);
 
-        panel.addMouseMotionListener(new MouseMotionListener(){
+        panelBoard.addMouseMotionListener(new MouseMotionListener(){
 
             @Override
             public void mouseDragged(MouseEvent e) {
-                // TODO Auto-generated method stub
                 Pixel pix = new Pixel();
                 pix.x = e.getX();
                 pix.y = e.getY();
@@ -59,7 +83,7 @@ public class TableauBlac extends UnicastRemoteObject implements ITableauBlac{
     }
 
     public void setVisibleFrame(){
-        fenetre.setVisible(true);
+         fenetre.setVisible(true);
     }
 
     public JPanel afficherListesCouleur(){
@@ -118,8 +142,14 @@ public class TableauBlac extends UnicastRemoteObject implements ITableauBlac{
     @Override
     public void afficherContenu(Pixel p) throws RemoteException {
         // TODO Auto-generated method stub
-        Graphics graphic = panel.getGraphics();
+        Graphics graphic = panelBoard.getGraphics();
         graphic.setColor(p.c);
         graphic.fillRect(p.x, p.y, 7, 7);
     }
+
+    @Override
+    public String SendMessage(Plateform pl) throws RemoteException {
+        return "success";
+    }
+
 }

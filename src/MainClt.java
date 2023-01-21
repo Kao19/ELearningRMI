@@ -10,48 +10,59 @@ import javax.swing.event.*;
 
 public class MainClt extends JFrame implements ActionListener {
 
+    JPanel GlobalPanel;
     JPanel panel;
+	JFrame GlobalFrame;
 	JFrame frame;
     JLabel userLabel, passLabel;  
     JTextField  textField1, textField2; 
     JButton b1;
+    JButton login;
+	JButton register;
     
 	MainClt() throws MalformedURLException, RemoteException, NotBoundException{
         
+        LoginForm();
+        
+	}
+
+
+    public void LoginForm(){
+
 		frame = new JFrame("Login");
  
       	panel = new JPanel();	
 		frame.add(panel);
 
-            userLabel = new JLabel();  
-			userLabel.setText("Username");      
-			
-			textField1 = new JTextField(15); 
-			
-			passLabel = new JLabel();  
-			passLabel.setText("Password");      
-			
-			textField2 = new JPasswordField(15);    
-			
-			b1 = new JButton("login");
-			  
-			panel.add(userLabel);      
-			panel.add(textField1);     
-			panel.add(passLabel);      
-			panel.add(textField2);     
-			panel.add(b1);             
-			
-			
-			add(panel);  
-			
-			
-			this.setSize(800,600); 
-			setLocationRelativeTo(null);
-			
-			b1.addActionListener(this);       
-			setTitle("LOGIN FORM");         
-  
-			this.setVisible(true);
+        userLabel = new JLabel();  
+        userLabel.setText("Username");      
+        
+        textField1 = new JTextField(15); 
+        
+        passLabel = new JLabel();  
+        passLabel.setText("Password");      
+        
+        textField2 = new JPasswordField(15);    
+        
+        b1 = new JButton("login");
+            
+        panel.add(userLabel);      
+        panel.add(textField1);     
+        panel.add(passLabel);      
+        panel.add(textField2);     
+        panel.add(b1);             
+        
+        
+        add(panel);  
+        
+        
+        this.setSize(800,600); 
+        setLocationRelativeTo(null);
+        
+        b1.addActionListener(this);       
+        setTitle("LOGIN FORM");         
+
+        this.setVisible(true);
 	}
 
 	public void actionPerformed(ActionEvent e){
@@ -67,6 +78,15 @@ public class MainClt extends JFrame implements ActionListener {
                     this.setVisible(false);
                     this.tableau();   
                 }
+                else{
+                    int input = JOptionPane.showOptionDialog(null, "login or password wrong", "fail login", JOptionPane.OK_CANCEL_OPTION, JOptionPane.INFORMATION_MESSAGE, null, null, null);
+
+                    if(input == JOptionPane.OK_OPTION)
+                    {
+                        this.setVisible(false);
+                        MainClt cl = new MainClt();
+                    }
+                }
             } catch (Exception ex) {
                 
             }   
@@ -76,11 +96,14 @@ public class MainClt extends JFrame implements ActionListener {
 	
     public void tableau(){
         try {    
-            String urlTab = "rmi://127.0.0.1/tableauBlanc";
-            IBroadcastTableauBlanc broad = (IBroadcastTableauBlanc) Naming.lookup(urlTab);
-            TableauBlac tab = new TableauBlac(broad);
-            tab.setVisibleFrame();
-            broad.enregistrerContenu(tab);
+            String urlPlateform = "rmi://127.0.0.1/launchPlateform";
+            
+            IPlateforme plt = (IPlateforme) Naming.lookup(urlPlateform);
+           
+            ELearningGUI plateform = new ELearningGUI(plt);
+            plateform.setVisibleFrame();
+            plt.enregistrerContenu(plateform);
+            
         } catch (Exception excep) {
             // TODO: handle exception
         }
@@ -88,17 +111,6 @@ public class MainClt extends JFrame implements ActionListener {
 
 
     public static void main(String[] args) throws MalformedURLException, RemoteException, NotBoundException {
-        //String urlTab = "rmi://127.0.0.1/tableauBlanc";
-        // String urlLogin = "rmi://127.0.0.1/login";
-        // try {
-        //     ILogin log = (ILogin) Naming.lookup(urlLogin);
-            //IBroadcastTableauBlanc broad = (IBroadcastTableauBlanc) Naming.lookup(urlTab);
-            //TableauBlac tab = new TableauBlac(broad);
-            //broad.enregistrerContenu(tab);
-        //     System.out.println(log.login("kaoutar", "123"));
-        // } catch (Exception e) {
-        //     // TODO: handle exception
-        // }
         MainClt cl = new MainClt();
     }
 }
