@@ -2,13 +2,13 @@ import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.*;
 
-public class Plateform extends UnicastRemoteObject implements IPlateforme {
+public class Board extends UnicastRemoteObject implements IBoard {
 
     private ArrayList<IELearning> tableau;
     private ArrayList<Pixel> p;
 
     
-    protected Plateform() throws RemoteException {
+    protected Board() throws RemoteException {
         tableau = new ArrayList<IELearning>();
         p = new ArrayList<Pixel>();
     }
@@ -24,7 +24,6 @@ public class Plateform extends UnicastRemoteObject implements IPlateforme {
                 s.afficherContenu(p);
             }catch (Exception e)
             {
-                this.tableau.remove(s);
             }
         }
     }

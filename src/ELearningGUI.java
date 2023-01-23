@@ -5,6 +5,8 @@ import java.util.*;
 import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
+import javax.swing.text.BadLocationException;
+import javax.swing.text.StyledDocument;
 
 public class ELearningGUI extends UnicastRemoteObject implements IELearning{
     
@@ -12,24 +14,27 @@ public class ELearningGUI extends UnicastRemoteObject implements IELearning{
 
     JPanel panelBoard;
     Color couleurEcriture = Color.black;
-    IPlateforme broad;
+    IBoard broad;
     Color[] listeCouleurs = { Color.black, Color.white, Color.blue, Color.green, Color.red };
 
-    JPanel panelRoom;
+    JTextPane panelRoom;
+    JTextField input;
+    String message = "";
 
-    public ELearningGUI(IPlateforme broad) throws RemoteException{
-        
+
+    public ELearningGUI(IBoard broad) throws RemoteException{
+
         this.broad = broad;
         panelBoard = new JPanel();
         panelBoard.setBackground(Color.white);
         panelBoard.setPreferredSize(new Dimension(400,600));
         
 
-        panelRoom = new JPanel();
-        panelRoom.setBackground(Color.black);
+        panelRoom = new JTextPane();
+        panelRoom.setBackground(Color.LIGHT_GRAY);
         panelRoom.setPreferredSize(new Dimension(400,600));
         
-        JTextField input = new JTextField(35);
+        input = new JTextField(35);
         input.setBounds(20,40,200,30);
 
 
@@ -83,7 +88,7 @@ public class ELearningGUI extends UnicastRemoteObject implements IELearning{
     }
 
     public void setVisibleFrame(){
-         fenetre.setVisible(true);
+        fenetre.setVisible(true);
     }
 
     public JPanel afficherListesCouleur(){
@@ -147,9 +152,38 @@ public class ELearningGUI extends UnicastRemoteObject implements IELearning{
         graphic.fillRect(p.x, p.y, 7, 7);
     }
 
-    @Override
-    public String SendMessage(Plateform pl) throws RemoteException {
-        return "success";
-    }
 
+    @Override
+    public void SendMessage() throws RemoteException {
+        input.addKeyListener(new KeyListener() {
+
+			@Override
+			public void keyTyped(KeyEvent e) {
+			}
+
+			@Override
+			public void keyReleased(KeyEvent e) {
+
+				if (e.getKeyCode() == 10) {
+					input.setCaretPosition(0); 
+				}
+			}
+
+			@Override
+			public void keyPressed(KeyEvent e) {
+
+				if (e.getKeyCode() == 10) {
+					message = input.getText().trim();
+					input.setText(null);
+                    panelRoom.add(new JTextArea(message));
+                    StyledDocument doc = panelRoom.getStyledDocument();
+                    try {
+                        doc.insertString(doc.getLength(), message + "\n", null);
+                    } catch (BadLocationException e1) {
+                        e1.printStackTrace();
+                    }
+				}   
+			}
+		});
+    }
 }

@@ -2,13 +2,16 @@ import java.net.MalformedURLException;
 import java.rmi.*;
 import java.rmi.registry.*;
 import java.rmi.server.*;
+import java.util.*;
 
 public class MainServer {
     public static void main(String[] args) throws RemoteException{
 
         Login log = new Login();
 
-        Plateform plateform = new Plateform();
+        Board plateform = new Board();
+
+        Chat server = new Chat("server",null);
 
         LocateRegistry.createRegistry(1099);
         try {
@@ -16,6 +19,8 @@ public class MainServer {
             Naming.rebind("login", log);
 
             Naming.rebind("launchPlateform", plateform);
+
+            Naming.rebind("CHAT", server);
 
             System.out.println("objet distant cree");
         } catch (MalformedURLException e) {

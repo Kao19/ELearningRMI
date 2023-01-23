@@ -7,12 +7,15 @@ import java.awt.event.*;
 import java.net.MalformedURLException;
 
 import javax.swing.event.*;
+import javax.swing.text.BadLocationException;
+import javax.swing.text.StyledDocument;
 
 public class MainClt extends JFrame implements ActionListener {
 
-    JPanel GlobalPanel;
     JPanel panel;
-	JFrame GlobalFrame;
+    JTextPane panelRoom;
+    JTextField input;
+    JFrame chatroom;
 	JFrame frame;
     JLabel userLabel, passLabel;  
     JTextField  textField1, textField2; 
@@ -76,7 +79,7 @@ public class MainClt extends JFrame implements ActionListener {
                 System.out.println(log.login(textField1.getText(), textField2.getText()));
                 if(log.login(textField1.getText(), textField2.getText())){
                     this.setVisible(false);
-                    this.tableau();   
+                    this.plateform();   
                 }
                 else{
                     int input = JOptionPane.showOptionDialog(null, "login or password wrong", "fail login", JOptionPane.OK_CANCEL_OPTION, JOptionPane.INFORMATION_MESSAGE, null, null, null);
@@ -94,15 +97,81 @@ public class MainClt extends JFrame implements ActionListener {
         
     }
 	
-    public void tableau(){
+    public void plateform(){
         try {    
-            String urlPlateform = "rmi://127.0.0.1/launchPlateform";
+            // String urlPlateform = "rmi://127.0.0.1/launchPlateform";
             
-            IPlateforme plt = (IPlateforme) Naming.lookup(urlPlateform);
+            // IBoard plt = (IBoard) Naming.lookup(urlPlateform);
            
-            ELearningGUI plateform = new ELearningGUI(plt);
-            plateform.setVisibleFrame();
-            plt.enregistrerContenu(plateform);
+            // ELearningGUI gui = new ELearningGUI(plt);
+            // gui.setVisibleFrame();
+            // plt.enregistrerContenu(gui);
+
+
+            panelRoom = new JTextPane();
+            panelRoom.setBackground(Color.LIGHT_GRAY);
+            panelRoom.setPreferredSize(new Dimension(400,600));
+            
+            input = new JTextField(35);
+            input.setBounds(20,40,200,30);
+
+            JPanel p = new JPanel();
+            p.setLayout( new BorderLayout() );
+            p.add( panelRoom, BorderLayout.CENTER);
+            p.add( input, BorderLayout.SOUTH);
+
+            chatroom = new JFrame();                               
+            chatroom.setContentPane(p);
+            chatroom.pack();
+            chatroom.setVisible( true );
+            chatroom.setDefaultCloseOperation( JFrame.EXIT_ON_CLOSE );
+            chatroom.setLocationRelativeTo(null);
+            chatroom.setResizable(false);
+     
+            
+            String urlChat = "rmi://127.0.0.1/CHAT";
+            IChat client = new Chat(textField1.getText(),panelRoom);
+            IChat server = (IChat) Naming.lookup(urlChat);
+            server.setClient(client);
+
+                input.addKeyListener(new KeyListener() {
+
+                    @Override
+                    public void keyTyped(KeyEvent e) {
+                    }
+        
+                    @Override
+                    public void keyReleased(KeyEvent e) {
+        
+                        if (e.getKeyCode() == 10) {
+                            input.setCaretPosition(0); 
+                            input.setText(null);
+                        }
+                    }
+        
+                    @Override
+                    public void keyPressed(KeyEvent e) {
+        
+                        if (e.getKeyCode() == 10) {
+                            // Chat.panelRoom.add(new JTextArea(input.getText()));
+                            // StyledDocument doc = Chat.panelRoom.getStyledDocument();
+                            // try {
+                            //     doc.insertString(doc.getLength(), input.getText() + "\n", null);
+                            // } catch (BadLocationException e1) {
+                            //     e1.printStackTrace();
+                            // }
+                            try {
+                                server.sendToALL(input.getText(),panelRoom);
+                            } catch (RemoteException e1) {
+                                // TODO Auto-generated catch block
+                                e1.printStackTrace();
+                            }
+                        }   
+                    }
+                });
+
+            
+            
             
         } catch (Exception excep) {
             // TODO: handle exception

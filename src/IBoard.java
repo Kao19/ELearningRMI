@@ -1,6 +1,6 @@
 import java.rmi.*;
 
-public interface IPlateforme extends Remote{
+public interface IBoard extends Remote{
 
     void diffuserContenu(Pixel p) throws RemoteException;
     
