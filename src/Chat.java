@@ -49,7 +49,7 @@ public class Chat extends UnicastRemoteObject implements IChat{
 		return clts;
 	}
 
-	public void send(String s, JTextPane p) throws RemoteException{
+	public void send(String s) throws RemoteException{
 		System.out.println(s);
 		Chat.panelRoom.add(new JTextArea(s));
 		StyledDocument doc = Chat.panelRoom.getStyledDocument();
@@ -61,11 +61,10 @@ public class Chat extends UnicastRemoteObject implements IChat{
 		
 	}
     
-    public void sendToALL(String msg, JTextPane p) throws RemoteException{
+    public void sendToALL(String msg) throws RemoteException{
 		for (int i = 0; i < clts.size(); i++) {
             System.out.println(msg);
-            //clts.get(i).send(msg);
-			clts.get(i).send(msg,p);
+			clts.get(i).send(msg);
 		}
     }
    

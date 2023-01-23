@@ -32,5 +32,27 @@ public class Login extends UnicastRemoteObject implements ILogin{
         }
         return false;
     }
+
+    @Override
+    public Boolean isProfessor(String username) throws RemoteException {
+        String db = "jdbc:mysql://localhost:3306/elearning";
+        try{
+            Class.forName("com.mysql.cj.jdbc.Driver");
+			con = DriverManager.getConnection(db, "root", "");          
+        }catch(Exception e){
+            e.printStackTrace();
+        }
+        String query = "SELECT * FROM elearning.user WHERE profile = 'professeur' and username = '" + username + "'";
+        try{
+            Statement stmt = con.createStatement();
+            ResultSet rs = stmt.executeQuery(query);
+            if(rs.next()){
+                return true;
+            }
+        }catch(SQLException e){
+            e.printStackTrace();
+        }
+        return false;
+    }
     
 }

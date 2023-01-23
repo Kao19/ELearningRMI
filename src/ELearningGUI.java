@@ -17,46 +17,23 @@ public class ELearningGUI extends UnicastRemoteObject implements IELearning{
     IBoard broad;
     Color[] listeCouleurs = { Color.black, Color.white, Color.blue, Color.green, Color.red };
 
-    JTextPane panelRoom;
-    JTextField input;
-    String message = "";
-
 
     public ELearningGUI(IBoard broad) throws RemoteException{
 
         this.broad = broad;
         panelBoard = new JPanel();
         panelBoard.setBackground(Color.white);
-        panelBoard.setPreferredSize(new Dimension(400,600));
-        
-
-        panelRoom = new JTextPane();
-        panelRoom.setBackground(Color.LIGHT_GRAY);
-        panelRoom.setPreferredSize(new Dimension(400,600));
-        
-        input = new JTextField(35);
-        input.setBounds(20,40,200,30);
-
+        panelBoard.setPreferredSize(new Dimension(200,400));
 
         JPanel colors = afficherListesCouleur();
-
-        
-        JPanel inputANDcolors = new JPanel();
-        inputANDcolors.setPreferredSize(new Dimension(400,30));
-        inputANDcolors.add( colors, BorderLayout.WEST);
-        inputANDcolors.add(Box.createHorizontalStrut(77));
-        inputANDcolors.add( input, BorderLayout.EAST);
-        
 
         JPanel p = new JPanel();
         p.setLayout( new BorderLayout() );
         p.add( panelBoard, BorderLayout.CENTER);
-        p.add( panelRoom, BorderLayout.EAST);
-        p.add(inputANDcolors, BorderLayout.SOUTH);
+        p.add( colors, BorderLayout.SOUTH);
         
         fenetre = new JFrame();                               
-        fenetre.setContentPane(p);
-        fenetre.pack();
+        fenetre.add(p, BorderLayout.WEST);
         fenetre.setVisible( false );
         fenetre.setDefaultCloseOperation( JFrame.EXIT_ON_CLOSE );
         fenetre.setLocationRelativeTo(null);
@@ -87,25 +64,29 @@ public class ELearningGUI extends UnicastRemoteObject implements IELearning{
         });
     }
 
-    public void setVisibleFrame(){
+    public void setVisibleFrame(JPanel p){
         fenetre.setVisible(true);
+        fenetre.add(p, BorderLayout.EAST);
+        fenetre.pack();
+        fenetre.setLocationRelativeTo(null);
     }
 
     public JPanel afficherListesCouleur(){
         final JPanel tmp = new JPanel(){
             public void paint(Graphics g){
+                super.paint(g);
                 for (int i = 0; i < listeCouleurs.length; i++) {
-                    int dx = (int) ((300.0/listeCouleurs.length) * i);
-                    int tx = (int) ((300.0/listeCouleurs.length));
+                    int dx = (int) ((200.0/listeCouleurs.length) * i);
+                    int tx = (int) ((200.0/listeCouleurs.length));
                     g.setColor( listeCouleurs[i] );
                     if ( ! listeCouleurs.equals(listeCouleurs[i]) )
-                        g.fillRect(dx, 0, tx, 20);
+                        g.fillRect(dx, 10, tx, 20);
                     else
-                        g.drawRect(dx, 0, tx, 20);
+                        g.drawRect(dx, 10, tx, 20);
                 }
             }  
         };
-        tmp.setPreferredSize(new Dimension(300,20));
+        tmp.setPreferredSize(new Dimension(200,30));
     
         tmp.addMouseListener(new MouseListener(){
 
@@ -118,7 +99,7 @@ public class ELearningGUI extends UnicastRemoteObject implements IELearning{
             @Override
             public void mousePressed(MouseEvent e) {
                 // TODO Auto-generated method stub
-                couleurEcriture = listeCouleurs[(int) ((e.getX())/(300./listeCouleurs.length))];
+                couleurEcriture = listeCouleurs[(int) ((e.getX())/(200./listeCouleurs.length))];
                 tmp.repaint();   
             }
 
@@ -150,40 +131,5 @@ public class ELearningGUI extends UnicastRemoteObject implements IELearning{
         Graphics graphic = panelBoard.getGraphics();
         graphic.setColor(p.c);
         graphic.fillRect(p.x, p.y, 7, 7);
-    }
-
-
-    @Override
-    public void SendMessage() throws RemoteException {
-        input.addKeyListener(new KeyListener() {
-
-			@Override
-			public void keyTyped(KeyEvent e) {
-			}
-
-			@Override
-			public void keyReleased(KeyEvent e) {
-
-				if (e.getKeyCode() == 10) {
-					input.setCaretPosition(0); 
-				}
-			}
-
-			@Override
-			public void keyPressed(KeyEvent e) {
-
-				if (e.getKeyCode() == 10) {
-					message = input.getText().trim();
-					input.setText(null);
-                    panelRoom.add(new JTextArea(message));
-                    StyledDocument doc = panelRoom.getStyledDocument();
-                    try {
-                        doc.insertString(doc.getLength(), message + "\n", null);
-                    } catch (BadLocationException e1) {
-                        e1.printStackTrace();
-                    }
-				}   
-			}
-		});
     }
 }
