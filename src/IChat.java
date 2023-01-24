@@ -10,4 +10,5 @@ public interface IChat extends Remote{
 	public IChat getClient() throws RemoteException;
     public void sendToALL(String msg) throws RemoteException;
 	public JTextPane getPanelRoom() throws RemoteException;
+	public byte[] downloadFile(String fileName) throws RemoteException;
 }

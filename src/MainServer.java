@@ -13,6 +13,8 @@ public class MainServer {
 
         Chat server = new Chat("server",null);
 
+        Admin ad = new Admin();
+
         LocateRegistry.createRegistry(1099);
         try {
             
@@ -21,6 +23,8 @@ public class MainServer {
             Naming.rebind("launchPlateform", plateform);
 
             Naming.rebind("CHAT", server);
+
+            Naming.rebind("admin", ad);
 
             System.out.println("objet distant cree");
         } catch (MalformedURLException e) {
