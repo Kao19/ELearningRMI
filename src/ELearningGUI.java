@@ -35,7 +35,7 @@ public class ELearningGUI extends UnicastRemoteObject implements IELearning{
         fenetre = new JFrame();                               
         fenetre.add(p, BorderLayout.WEST);
         fenetre.setVisible( false );
-        fenetre.setDefaultCloseOperation( JFrame.EXIT_ON_CLOSE );
+        fenetre.setDefaultCloseOperation( JFrame.HIDE_ON_CLOSE );
         fenetre.setLocationRelativeTo(null);
         fenetre.setResizable(false);
 

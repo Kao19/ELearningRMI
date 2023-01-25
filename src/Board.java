@@ -4,8 +4,8 @@ import java.util.*;
 
 public class Board extends UnicastRemoteObject implements IBoard {
 
-    private ArrayList<IELearning> tableau;
-    private ArrayList<Pixel> p;
+    final private ArrayList<IELearning> tableau;
+    final private ArrayList<Pixel> p;
 
     
     protected Board() throws RemoteException {
