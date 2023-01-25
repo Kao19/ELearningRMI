@@ -1,10 +1,12 @@
 import java.rmi.RemoteException;
 import java.rmi.server.*;
 import java.sql.*;
+import java.util.ArrayList;
 
 public class Admin extends UnicastRemoteObject implements IAdmin{
 
     public Connection con;
+    public ArrayList<String> listeClass = new ArrayList<String>();
 
     protected Admin() throws RemoteException {
         super();
@@ -31,7 +33,7 @@ public class Admin extends UnicastRemoteObject implements IAdmin{
     }
 
     @Override
-    public boolean addProf(String username, String password) throws RemoteException {
+    public boolean insertUser(String username, String password, String profile, String classe) throws RemoteException {
         String db = "jdbc:mysql://localhost:3306/elearning";
         try{
             Class.forName("com.mysql.cj.jdbc.Driver");
@@ -39,14 +41,14 @@ public class Admin extends UnicastRemoteObject implements IAdmin{
         }catch(Exception e){
             e.printStackTrace();
         }
-        String query = "insert into user values (?,?,'professeur')";
+        String query = "insert into user values (?,?,?,?)";
         try{
             PreparedStatement pstmt = con.prepareStatement(query);
             pstmt.setString(1, username);
             pstmt.setString(2, password);
-            if(pstmt.execute()){
-                return true;
-            }
+            pstmt.setString(3, profile);
+            pstmt.setString(4, classe);
+            return pstmt.execute();
         }catch(SQLException e){
             e.printStackTrace();
         }
@@ -54,7 +56,7 @@ public class Admin extends UnicastRemoteObject implements IAdmin{
     }
 
     @Override
-    public boolean addetudiant(String username, String password) throws RemoteException {
+    public ArrayList<String> listOfClasses() throws RemoteException {
         String db = "jdbc:mysql://localhost:3306/elearning";
         try{
             Class.forName("com.mysql.cj.jdbc.Driver");
@@ -62,18 +64,18 @@ public class Admin extends UnicastRemoteObject implements IAdmin{
         }catch(Exception e){
             e.printStackTrace();
         }
-        String query = "insert into user values (?,?,'etudiant')";
+        String query = "select * from class";
         try{
             PreparedStatement pstmt = con.prepareStatement(query);
-            pstmt.setString(1, username);
-            pstmt.setString(2, password);
-            if(pstmt.execute()){
-                return true;
+            ResultSet resultset = pstmt.executeQuery();
+            while (resultset.next()) {
+                listeClass.add(resultset.getString("className")); // add it to the result
             }
         }catch(SQLException e){
             e.printStackTrace();
         }
-        return false;
+
+        return listeClass;
     }    
 
     

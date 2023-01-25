@@ -1,6 +1,8 @@
 import java.rmi.*;
 import java.rmi.registry.*;
 import java.rmi.server.*;
+import java.util.ArrayList;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
@@ -51,7 +53,7 @@ public class MainClt extends JFrame implements ActionListener {
         this.admin.addActionListener(new ActionListener() { 
             public void actionPerformed(ActionEvent e) {  
                 adminOrLogin.setVisible(false);     
-                AdminForm();
+                LoginForm();
             } 
         } );
 		
@@ -68,60 +70,27 @@ public class MainClt extends JFrame implements ActionListener {
         JFrame frame = new JFrame("Admin frame");
  
       	JPanel panel = new JPanel();	
-		frame.add(panel);
-
+		
         JLabel classLabel = new JLabel();  
         classLabel.setText("classe:");      
         JTextField classe = new JTextField(15); 
         JButton addClasse = new JButton("ajouter classe");
         
-        
-        JLabel profLabel = new JLabel();  
-        profLabel.setText("login professeur:");      
-        JTextField profLogin = new JPasswordField(10); 
-        JLabel profLabel2 = new JLabel();  
-        profLabel2.setText("password professeur:");      
-        JTextField profPassword = new JPasswordField(10); 
-        JButton addProf = new JButton("ajouter professeur");   
-        
-        
-        JLabel etudiantLabel = new JLabel();  
-        etudiantLabel.setText("Login etudiant:");      
-        JTextField etudiantLogin = new JPasswordField(10); 
-        JLabel etudiantLabel2 = new JLabel();  
-        etudiantLabel2.setText("Password etudiant:");      
-        JTextField etudiantPassword = new JPasswordField(10);    
-        JButton addetudiant = new JButton("ajouter etudiant");
             
         panel.add(classLabel);      
         panel.add(classe);
         panel.add(addClasse); 
         panel.add(new JLabel("                                                                                                                                                                                               "));
-
-        panel.add(profLabel); 
-        panel.add(profLogin);     
-        panel.add(profLabel2);     
-        panel.add(profPassword); 
-        panel.add(addProf);
-        panel.add(new JLabel("                                                                                                                                                                                               "));
-
-
-        panel.add(etudiantLabel);
-        panel.add(etudiantLogin);     
-        panel.add(etudiantLabel2);     
-        panel.add(etudiantPassword);                
-        panel.add(addetudiant);
-        panel.add(new JLabel("              "));
  
 
-        JButton jb = new JButton("Lister");            
+        JButton jb = new JButton("associer prof et etudiants");            
         panel.add(jb);
         
-        add(panel);  
+        frame.add(panel);  
         
         
-        this.setSize(640,440); 
-        setLocationRelativeTo(null);
+        frame.setSize(640,440); 
+        frame.setLocationRelativeTo(null);
         
         addClasse.addActionListener(new ActionListener(){
 
@@ -133,7 +102,7 @@ public class MainClt extends JFrame implements ActionListener {
                     if(iad.addClasse(classe.getText())){
                         JOptionPane.showOptionDialog(null, "probleme d'insertion", "problem", JOptionPane.OK_CANCEL_OPTION, JOptionPane.INFORMATION_MESSAGE, null, null, null);
                     }else{
-                        JOptionPane.showOptionDialog(null, "information bien inserte", "success", JOptionPane.OK_CANCEL_OPTION, JOptionPane.INFORMATION_MESSAGE, null, null, null);
+                        JOptionPane.showOptionDialog(null, "information bien inseree", "success", JOptionPane.OK_CANCEL_OPTION, JOptionPane.INFORMATION_MESSAGE, null, null, null);
                     }
                 } catch (MalformedURLException | RemoteException | NotBoundException e1) {
                     // TODO Auto-generated catch block
@@ -143,37 +112,21 @@ public class MainClt extends JFrame implements ActionListener {
             
         });
         
-        addProf.addActionListener(new ActionListener(){
+
+        jb.addActionListener(new ActionListener(){
             @Override
             public void actionPerformed(ActionEvent e) {
-                String urlAdmin= "rmi://127.0.0.1/admin";
+                setVisible(false);
+                frame.setVisible(false);
                 try {
-                    IAdmin iad = (IAdmin) Naming.lookup(urlAdmin);
-                    if(iad.addProf(profLogin.getText(), profPassword.getText())){
-                        JOptionPane.showOptionDialog(null, "probleme d'insertion", "problem", JOptionPane.OK_CANCEL_OPTION, JOptionPane.INFORMATION_MESSAGE, null, null, null);
-                    }else{
-                        JOptionPane.showOptionDialog(null, "information bien inserte", "success", JOptionPane.OK_CANCEL_OPTION, JOptionPane.INFORMATION_MESSAGE, null, null, null);
-                    }
-                } catch (MalformedURLException | RemoteException | NotBoundException e1) {
+                    affectation();
+                } catch (MalformedURLException e1) {
                     // TODO Auto-generated catch block
                     e1.printStackTrace();
-                }
-            }
-            
-        });
-
-        addetudiant.addActionListener(new ActionListener(){
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                String urlAdmin= "rmi://127.0.0.1/admin";
-                try {
-                    IAdmin iad = (IAdmin) Naming.lookup(urlAdmin);
-                    if(iad.addetudiant(etudiantLogin.getText(), etudiantPassword.getText())){
-                        JOptionPane.showOptionDialog(null, "probleme d'insertion", "problem", JOptionPane.OK_CANCEL_OPTION, JOptionPane.INFORMATION_MESSAGE, null, null, null);
-                    }else{
-                        JOptionPane.showOptionDialog(null, "information bien inserte", "success", JOptionPane.OK_CANCEL_OPTION, JOptionPane.INFORMATION_MESSAGE, null, null, null);
-                    }
-                } catch (MalformedURLException | RemoteException | NotBoundException e1) {
+                } catch (RemoteException e1) {
+                    // TODO Auto-generated catch block
+                    e1.printStackTrace();
+                } catch (NotBoundException e1) {
                     // TODO Auto-generated catch block
                     e1.printStackTrace();
                 }
@@ -181,16 +134,116 @@ public class MainClt extends JFrame implements ActionListener {
             
         });
         
-        setTitle("ADMIN FORM");         
+        frame.setTitle("ADMIN FORM");         
 
-        setSize(640,440);
-		setLocationRelativeTo(null);
-		setVisible(true);
-		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setResizable(false);
+        frame.setSize(640,440);
+		frame.setLocationRelativeTo(null);
+		frame.setVisible(true);
+		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.setResizable(false);
 
     }
 
+
+    public void affectation() throws MalformedURLException, RemoteException, NotBoundException{
+        JFrame frame2 = new JFrame("Admin frame");
+ 
+      	JPanel panel2 = new JPanel();	
+		frame2.add(panel2); 
+        
+        JLabel label = new JLabel("choisir classe");      
+
+        String urlAdmin= "rmi://127.0.0.1/admin";
+        
+        IAdmin iad = (IAdmin) Naming.lookup(urlAdmin);
+        ArrayList<String> classes = iad.listOfClasses();
+        String[] languages = new String[classes.size()];
+        for (int i = 0; i < classes.size(); i++) {
+            languages[i] = classes.get(i);
+        }     
+        
+        final JComboBox cb=new JComboBox(languages);    
+        cb.setBounds(50, 100,90,20);    
+           
+        String selectedItem = cb.getSelectedItem().toString();           
+
+        JLabel profLabel = new JLabel();  
+        profLabel.setText("login professeur:");      
+        JTextField profLogin = new JTextField(10); 
+        JLabel profLabel2 = new JLabel();  
+        profLabel2.setText("password professeur:");      
+        JTextField profPassword = new JTextField(10);  
+        
+        
+        JLabel etudiantLabel = new JLabel();  
+        etudiantLabel.setText("Login etudiant:");      
+        JTextField etudiantLogin = new JTextField(10); 
+        JLabel etudiantLabel2 = new JLabel();  
+        etudiantLabel2.setText("Password etudiant:");      
+        JTextField etudiantPassword = new JTextField(10);  
+            
+
+        JButton affectation = new JButton("affecter");            
+
+        panel2.add(label);
+        panel2.add(cb);  
+        panel2.add(new JLabel("                                                                                                                                                                                               "));
+
+    
+        panel2.add(profLabel); 
+        panel2.add(profLogin);     
+        panel2.add(profLabel2);     
+        panel2.add(profPassword); 
+        panel2.add(new JLabel("                                                                                                                                                                                               "));
+
+
+        panel2.add(etudiantLabel);
+        panel2.add(etudiantLogin);     
+        panel2.add(etudiantLabel2);     
+        panel2.add(etudiantPassword);  
+        panel2.add(new JLabel("              "));
+        
+        panel2.add(affectation);
+        
+        frame2.add(panel2);  
+        
+        frame2.setSize(640,440); 
+        frame2.setLocationRelativeTo(null);
+        
+        
+        affectation.addActionListener(new ActionListener(){
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                String urlAdmin= "rmi://127.0.0.1/admin";
+                try {
+                    IAdmin iad = (IAdmin) Naming.lookup(urlAdmin);
+                    if(iad.insertUser(etudiantLogin.getText(), etudiantPassword.getText(), "etudiant", selectedItem)){
+                        JOptionPane.showOptionDialog(null, "probleme d'insertion", "problem", JOptionPane.OK_CANCEL_OPTION, JOptionPane.INFORMATION_MESSAGE, null, null, null);
+                    }else{
+                        JOptionPane.showOptionDialog(null, "informations bien inseree", "success", JOptionPane.OK_CANCEL_OPTION, JOptionPane.INFORMATION_MESSAGE, null, null, null);
+                    }
+                    if(iad.insertUser(profLogin.getText(), profPassword.getText(), "professeur", selectedItem)){
+                        JOptionPane.showOptionDialog(null, "probleme d'insertion", "problem", JOptionPane.OK_CANCEL_OPTION, JOptionPane.INFORMATION_MESSAGE, null, null, null);
+                    }else{
+                        JOptionPane.showOptionDialog(null, "informations bien inseree", "success", JOptionPane.OK_CANCEL_OPTION, JOptionPane.INFORMATION_MESSAGE, null, null, null);
+                    }
+                } catch (MalformedURLException | RemoteException | NotBoundException e1) {
+                    // TODO Auto-generated catch block
+                    e1.printStackTrace();
+                }
+            }
+            
+        });
+
+        
+        frame2.setTitle("ADMIN FORM");         
+
+        frame2.setSize(640,440);
+		frame2.setLocationRelativeTo(null);
+		frame2.setVisible(true);
+		frame2.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame2.setResizable(false);
+    }
 
     public void LoginForm(){
 
@@ -240,6 +293,10 @@ public class MainClt extends JFrame implements ActionListener {
                 if(log.login(textField1.getText(), textField2.getText())){
                     this.setVisible(false);
                     this.plateform();   
+                }
+                else if(log.loginAdmin(textField1.getText(), textField2.getText())){
+                    this.setVisible(false);
+                    this.AdminForm();   
                 }
                 else{
                     int input = JOptionPane.showOptionDialog(null, "login or password wrong", "fail login", JOptionPane.OK_CANCEL_OPTION, JOptionPane.INFORMATION_MESSAGE, null, null, null);
