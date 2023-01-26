@@ -1,10 +1,12 @@
 import java.rmi.RemoteException;
 import java.rmi.server.*;
 import java.sql.*;
+import java.util.ArrayList;
 
 public class Login extends UnicastRemoteObject implements ILogin{
 
     public Connection con;
+    public ArrayList<String> liste = new ArrayList<String>();
 
     public Login() throws RemoteException {
         super();
@@ -77,6 +79,55 @@ public class Login extends UnicastRemoteObject implements ILogin{
             e.printStackTrace();
         }
         return false;
+    }
+
+    @Override
+    public ArrayList<String> listeClassesEtudiant(String u, String p) throws RemoteException {
+        liste = new ArrayList<String>();
+        String db = "jdbc:mysql://localhost:3306/elearning";
+        try{
+            Class.forName("com.mysql.cj.jdbc.Driver");
+			con = DriverManager.getConnection(db, "root", "");          
+        }catch(Exception e){
+            e.printStackTrace();
+        }
+        String query = "select * from elearning.user where profile = 'etudiant' and class = (select class from elearning.user where username = '" + u + "' and password = '" + p + "')";
+        try{
+            PreparedStatement pstmt = con.prepareStatement(query);
+            ResultSet resultset = pstmt.executeQuery();
+            while (resultset.next()) {
+                liste.add(resultset.getString("username")); // add it to the result
+            }
+        }catch(SQLException e){
+            System.out.println(e.getMessage());
+        }
+        return liste;
+        
+    }
+
+    @Override
+    public String[] profETclasse(String u, String p) throws RemoteException {
+        String[] profClass = new String[2];
+        String db = "jdbc:mysql://localhost:3306/elearning";
+        try{
+            Class.forName("com.mysql.cj.jdbc.Driver");
+			con = DriverManager.getConnection(db, "root", "");          
+        }catch(Exception e){
+            e.printStackTrace();
+        }
+        String query = "select * from elearning.user where profile = 'professeur' and class = (select class from elearning.user where username = '" + u + "' and password = '" + p + "')";
+        try{
+            PreparedStatement pstmt = con.prepareStatement(query);
+            ResultSet resultset = pstmt.executeQuery();
+            while (resultset.next()) {
+                profClass[0] = resultset.getString("username"); 
+                profClass[1] = resultset.getString("class"); 
+            }
+        }catch(SQLException e){
+            System.out.println(e.getMessage());
+        }
+        return profClass;
+        
     }
     
 }

@@ -1,14 +1,12 @@
 import java.rmi.*;
 import java.rmi.server.*;
+import java.sql.*;
 import java.util.ArrayList;
 
-import javax.lang.model.element.Element;
 import javax.swing.*;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.StyledDocument;
 
-import java.awt.*;
-import java.awt.event.*;
 import java.io.*;
 
 public class Chat extends UnicastRemoteObject implements IChat{
@@ -64,10 +62,40 @@ public class Chat extends UnicastRemoteObject implements IChat{
 		}
 	}
     
+	Connection con;
+	String className = "";
     public void sendToALL(String msg) throws RemoteException{
+		String[] splitMsg = msg.split(":", 2);
+		String db = "jdbc:mysql://localhost:3306/elearning";
+        try{
+            Class.forName("com.mysql.cj.jdbc.Driver");
+			con = DriverManager.getConnection(db, "root", "");          
+        }catch(Exception e){
+            e.printStackTrace();
+        }
+        String query = "SELECT class FROM elearning.user WHERE username = '" + splitMsg[0].trim() + "'";
+        try{
+            Statement stmt = con.createStatement();
+            ResultSet rs = stmt.executeQuery(query);
+            if(rs.next()){
+                className = rs.getString("class");
+            }
+        }catch(SQLException e){
+            e.printStackTrace();
+        }
 		for (int i = 0; i < clts.size(); i++) {
             System.out.println(msg);
-			clts.get(i).send(msg);
+			//clts.get(i).send(msg);
+			String query2 = "SELECT class FROM elearning.user WHERE username = '" + clts.get(i).getName() + "' AND class = '" + className + "'";
+			try{
+				Statement stmt2 = con.createStatement();
+				ResultSet rs2 = stmt2.executeQuery(query2);
+				if(rs2.next()){
+					clts.get(i).send(msg);
+				}
+			}catch(SQLException e){
+				e.printStackTrace();
+			}
 		}
     }
 

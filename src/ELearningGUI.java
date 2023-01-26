@@ -64,9 +64,9 @@ public class ELearningGUI extends UnicastRemoteObject implements IELearning{
         });
     }
 
-    public void setVisibleFrame(JPanel p){
+    public void setVisibleFrame(JPanel p1){
         fenetre.setVisible(true);
-        fenetre.add(p, BorderLayout.EAST);
+        fenetre.add(p1, BorderLayout.EAST);
         fenetre.pack();
         fenetre.setLocationRelativeTo(null);
     }
